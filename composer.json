@@ -1,0 +1,6 @@
+{
+    "require": {
+        "pdfcrowd/pdfcrowd": "^4.8",
+        "tgmpa/tgm-plugin-activation": "^2.6.1"
+    }
+}
