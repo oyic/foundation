@@ -11,6 +11,6 @@ define('THEME_VERSION',$theme->Version);
 
 $default_directory = get_stylesheet_directory();
 
-foreach(glob($default_directory . '/inc/*.php') as $file){
+foreach(glob($default_directory . '/lib/*.php') as $file){
 	require_once($file);
 }

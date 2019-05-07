@@ -5,6 +5,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin")
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 const CleanDistFolder = require('clean-webpack-plugin')
+const CopyPlugin = require('copy-webpack-plugin');
 const glob = require('glob')
 
 module.exports = {
@@ -17,9 +18,12 @@ module.exports = {
   plugins: [
       // new CleanWebpackPlugin(),
       new MiniCssExtractPlugin({
-        filename: "css/sqe.css",
-        //publicPath:  "/dist"
+        filename: "sqe-style.css",
+        publicPath:  "/dist"
       }),
+      new CopyPlugin([
+      { from: 'images/*.*', to: './','context':"src"},
+    ]),
       new WebpackNotifierPlugin({title:'Compiling..., fool!',
             excludeWarnings: false,
             alwaysNotify:true,
@@ -46,28 +50,73 @@ module.exports = {
                test: /\.(sass|scss)$/,
                 exclude: /node_modules/,
                 use: [  MiniCssExtractPlugin.loader, 
-                  'css-loader',
-                  'postcss-loader',
+                        {loader: 'css-loader',
+                          // options:{url:false}
+                        },
+
+                        'postcss-loader',
+
                   {
                     loader:'sass-loader',
                     query: {
-                      includePaths: [ path.resolve(__dirname, '~foundation-sites/scss') ]
+                      includePaths: [ path.resolve(__dirname, '~foundation-sites') ]
                     },
                     } 
                   ] 
         },
     		// images
         {
-          test: /\.(png|jpe?g|gif)$/,
+          test: /\.(gif|png|jpe?g|svg)$/i,
           use: [
-                  {
-                    loader: 'file-loader',
-                    options: {
-                      		outputPath: 'images',
-                    	},
-                  },
-    		      ]
-    		},
-  	]
-  },
+              {
+                loader: 'file-loader',
+                 options: {
+                    // limit: 8192,
+                    name: 'images/[name].[ext]'
+                  }
+              },
+              {
+
+                loader:'file-loader',
+                options: {
+                name: 'images/[name].[ext]',
+               }
+              }
+               ,
+              // {
+              //   loader: 'image-webpack-loader',
+              //   options:
+              //   {
+              //      mozjpeg: {
+              //       progressive: true,
+              //       quality: 65
+              //     },
+              //     optipng: {
+              //       enabled: false,
+              //     },
+              //     pngquant: {
+              //       quality: '65-90',
+              //       speed: 4
+              //     },
+              //     gifsicle: {
+              //       interlaced: false,
+              //     },
+              //     webp: {
+              //       quality: 75
+              //     }
+              //   }
+              // }
+          ]
+        },
+        {
+             test: /\.(ttf|eot|svg|woff2|woff)$/,
+              loader: 'file-loader',
+                options: {
+                name: 'fonts/[name].[ext]',
+           
+          }
+      },
+      ]
+
+  }
 };
